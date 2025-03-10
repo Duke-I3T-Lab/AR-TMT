@@ -1,0 +1,36 @@
+# =============== #
+# Unity generated #
+# =============== #
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+MemoryCaptures/
+*.csproj
+*.unityproj
+*.sln
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.suo
+*.pdb
+*.opendb
+*.apk
+*.app
+*.website
+*.key
+*.ipa
+*.unitypackage
+
+# Visual Studio / VSCode files
+.vs/
+.vscode/
+.vsconfig
+
+# Other files
+*.DS_Store
