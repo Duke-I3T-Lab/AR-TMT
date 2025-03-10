@@ -1,0 +1,48 @@
+{
+    "Title": {
+        "header": "Situational Awareness Rating Questionnaire",
+        "text": "For each of the 10 contributing factors, please mark one of the seven boxes that best represents your experience.Press the trigger to continue."
+    },
+    "Questions": {
+        "1": {
+            "header": "Complexity of Situation",
+            "text": "How complicated is the situation? Is it complex with many interrelated components (High) or is it simple and straightforward (Low)?"
+        },
+        "2": {
+            "header": "Instability of Situation",
+            "text": "How changeable is the situation? Is the situation highly unstable and likely to change suddenly (High) or is it very stable and straightforward (Low)?"
+        },
+        "3": {
+            "header": "Variability of Situation",
+            "text": "How many variables are changing within the situation? Are there a large number of factors varying (High) or are there very few variables changing (Low)?"
+        },
+        "4": {
+            "header": "Arousal",
+            "text": "How aroused are you in the situation? Are you alert and ready for activity (High) or do you have a low degree of alertness (Low)?"
+        },
+        "5": {
+            "header": "Concentration of Attention",
+            "text": "How much are you concentrating on the situation? Are you concentracting on many aspects of the situation (High) or focused on only one (Low)?"
+        },
+        "6": {
+            "header": "Division of Attention",
+            "text": "How much is your attention divided in the situation? Are you concentrating on many aspects of the situation (High) or focused on only one (Low)?"
+        },
+        "7": {
+            "header": "Spare Mental Capacity",
+            "text": "How much mental capacity do you have to spare in the situation? Do you have sufficient capacity to attend to many variables (High) or nothing to spare at all (Low)?"
+        },
+        "8": {
+            "header": "Information Quantity",
+            "text": "How much information have you gained about the situation? Have you received and understood a great deal of knowledge (High) or very little (Low)?"
+        },
+        "9": {
+            "header": "Information Quality",
+            "text": "How good is the information you have gained about the situation? Is the knowledge communicated very useful (High) or is it not usable at all (Low)?"
+        },
+        "10": {
+            "header": "Familiarity with Situation",
+            "text": "How familiar are you with the situation? Do you have a great deal of relevant experience (High) or is it a new situation (Low)?"
+        }
+    }
+}
