@@ -32,7 +32,7 @@ public class NoticeHandler : MonoBehaviour
     private TestCameraRecording_CVcamera cameraScript;
     private PlaneDetectionMarker planedetectionscript;
     
-    private bool calibrating = false;
+    public bool calibrating = false;
 
     public float desiredDistance = 1f;         // desired distance (in meters) from the camera
     public float angleThreshold = 30f;           // if the angle between camera forward and canvas > 30 degrees, relocate
@@ -106,6 +106,12 @@ public class NoticeHandler : MonoBehaviour
                 Debug.Log($"Raycast hit: {hit.collider.gameObject.name}");
                 if (hit.collider != null && hit.collider.gameObject == okButton.gameObject)
                 {
+                    if(SharedInfomanager.Instance.currentGeneration == SharedInfomanager.Instance.wall_tmtA || SharedInfomanager.Instance.currentGeneration == SharedInfomanager.Instance.wall_tmtB)
+                    {
+                        if(SharedInfomanager.Instance.wall_calibrated==false){
+                            return;
+                        }
+                    }
                     Debug.Log("start button pressed!");
                     OnOkButtonClicked();
                 }
@@ -174,14 +180,9 @@ public class NoticeHandler : MonoBehaviour
         }
         noticeUI.SetActive(true); // Activate the Notice UI
 
-        // Set Notice UI position, rotation, and scale
-        Transform camTransform = Camera.main.transform;
+        SharedInfomanager.Instance.initializeUIposition(noticeUI, 0.0051f);
 
-
-        noticeUI.transform.position =camTransform.position + camTransform.forward * desiredDistance;
-        noticeUI.transform.rotation = Quaternion.LookRotation(noticeUI.transform.position - camTransform.position); // Align rotation to face the camera
-        noticeUI.transform.localScale = Vector3.one * 0.0051f; // Set a consistent scale
-
+       
         string panelName;
         if (SharedInfomanager.Instance.currentGeneration == 0)
         {
@@ -222,6 +223,11 @@ public class NoticeHandler : MonoBehaviour
                 rescanbutton.SetActive(true);
 
             }
+            else
+            {
+                rescanbutton.SetActive(false);
+
+            }
 
         }    
     }
@@ -238,34 +244,11 @@ public class NoticeHandler : MonoBehaviour
         }
     }
 
-
     void Update()
     {
-        // Only reposition if the canvas is active (survey started)
-        if (!noticeUI.activeSelf) return;
+        SharedInfomanager.Instance.UpdateUIposition(noticeUI);
 
-        Transform camTransform = Camera.main.transform;
-        Vector3 camPos = camTransform.position;
-        Vector3 camForward = camTransform.forward;
-
-        // Compute the direction and distance from the camera to the canvas
-        Vector3 directionToCanvas = noticeUI.transform.position - camPos;
-        float currentDistance = directionToCanvas.magnitude;
-        directionToCanvas.Normalize();
-
-        // Compute the angle between camera's forward direction and the direction to the canvas
-        float angle = Vector3.Angle(camForward, directionToCanvas);
-
-        // Check if the canvas is out of view (angle too large) or at the wrong distance
-        if (angle > angleThreshold || Mathf.Abs(currentDistance - desiredDistance) > distanceThreshold)
-        {
-            // Relocate the canvas in front of the camera
-            Vector3 newPos = camPos + camForward * desiredDistance;
-            noticeUI.transform.position = newPos;
-            noticeUI.transform.rotation = Quaternion.LookRotation(newPos - camPos);
-        }
     }
-
 
 
 

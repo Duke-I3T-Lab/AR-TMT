@@ -62,11 +62,7 @@ public class QuestionnaireControl : MonoBehaviour
         questionnaireCanvas.SetActive(true);
         questionnaireCanvas.transform.SetParent(null); // ensure it's not parented to the camera
 
-        // Position the canvas desiredDistance in front of the camera
-        Transform camTransform = Camera.main.transform;
-        questionnaireCanvas.transform.position = camTransform.position + camTransform.forward * desiredDistance;
-        questionnaireCanvas.transform.rotation = Quaternion.LookRotation(questionnaireCanvas.transform.position - camTransform.position);
-        questionnaireCanvas.transform.localScale = Vector3.one * 0.05f; // adjust scale as needed
+        SharedInfomanager.Instance.initializeUIposition(questionnaireCanvas, 0.05f);
 
         // Make sure buttons and choices are properly visible
         backwardButton.SetActive(false);
@@ -177,29 +173,8 @@ public class QuestionnaireControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Only reposition if the canvas is active (survey started)
-        if (!questionnaireCanvas.activeSelf) return;
+        SharedInfomanager.Instance.UpdateUIposition(questionnaireCanvas);
 
-        Transform camTransform = Camera.main.transform;
-        Vector3 camPos = camTransform.position;
-        Vector3 camForward = camTransform.forward;
-
-        // Compute the direction and distance from the camera to the canvas
-        Vector3 directionToCanvas = questionnaireCanvas.transform.position - camPos;
-        float currentDistance = directionToCanvas.magnitude;
-        directionToCanvas.Normalize();
-
-        // Compute the angle between camera's forward direction and the direction to the canvas
-        float angle = Vector3.Angle(camForward, directionToCanvas);
-
-        // Check if the canvas is out of view (angle too large) or at the wrong distance
-        if (angle > angleThreshold || Mathf.Abs(currentDistance - desiredDistance) > distanceThreshold)
-        {
-            // Relocate the canvas in front of the camera
-            Vector3 newPos = camPos + camForward * desiredDistance;
-            questionnaireCanvas.transform.position = newPos;
-            questionnaireCanvas.transform.rotation = Quaternion.LookRotation(newPos - camPos);
-        }
     }
 
 

@@ -49,6 +49,11 @@ public class MotorSpeedTest : MonoBehaviour
         new InputAction(binding: "<MagicLeapController>/pointerRotation", expectedControlType: "Quaternion");
 
     private bool hasTriggered = false;
+    public AudioClip soundClip;
+    private AudioSource audioSource;
+    public bool automaticupload;
+    [SerializeField] private DataUploader uploader;
+    [SerializeField] private string serverUrl = "http://192.168.1.23:5000/upload";
 
     void Start()
     {
@@ -58,6 +63,14 @@ public class MotorSpeedTest : MonoBehaviour
 
         triggerInputAction.performed += ActionOnPerformed;
         triggerInputAction.canceled += ActionOnCanceled;
+
+
+            audioSource = GetComponent<AudioSource>();
+        // If none exists, add one dynamically.
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
     private void OnDestroy()
     {
@@ -84,7 +97,10 @@ public class MotorSpeedTest : MonoBehaviour
             Vector3 rayDirection = rayRotation * Vector3.forward;
 
             Debug.Log($"Trigger pressed! Ray origin: {rayOrigin}, Ray direction: {rayDirection}");
-
+            
+            // Make sound effect
+            audioSource.PlayOneShot(soundClip,1.0f);
+            
             // Perform a raycast from the pointer position
             if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, 10f))
             {
@@ -205,6 +221,28 @@ public class MotorSpeedTest : MonoBehaviour
         {
             Debug.LogError($"Failed to save test results. Error: {ex.Message}");
         }
+
+
+
+        if (automaticupload)
+        {
+            if (uploader == null)
+            {
+                Debug.LogError("Uploader is null!!");
+            }
+            else{
+            Debug.Log("Data Transmission Triggered");
+            string userFolderPath=Path.Combine(Application.persistentDataPath, $"User{SharedInfomanager.Instance.userFolderCounter.ToString("D3")}");
+            
+            string path_performancedata=Path.Combine(userFolderPath, $"Performancedata_task0.json");            
+            uploader.UploadData(path_performancedata,serverUrl);
+
+            }
+        }
+
+
+
+
     }
     private Vector3 GetTargetSize(GameObject targetPrefab)
     {

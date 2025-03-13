@@ -16,18 +16,19 @@ public class SharedInfomanager : MonoBehaviour
     // Marker data
     public Pose MarkerPosition { get; private set; }
     public float MarkerSize { get; private set; }
+    public Vector3 Markerdirection { get; private set; }
+
     public bool IsMarkerDetected { get; private set; }
     
     // Sequence of targets to be hit
     public List<object> TargetHitSequence { get; private set;  }
     private int currentSequenceIndex = 0;
-    public int wall_tmtA = 6;
-    public int wall_tmtB = 7;
+
     // Predefined sequences for five generations
     private readonly List<List<object>> predefinedTargetSequences = new List<List<object>>
     {
         // 1. TMT-A(Baseline)
-        GenerateSequence(1, 25), 
+        GenerateSequence(1, 3), 
 
         // 2. TMT-B
         new List<object> { 1, "A", 2, "B", 3, "C", 4, "D", 5, "E", 6, "F", 7, "G", 8, "H", 9, "I", 10, "J", 11, "K", 12, "L", 13 },
@@ -113,7 +114,7 @@ public class SharedInfomanager : MonoBehaviour
     public int N_hitworngorder { get; private set; }
     public int N_hitmiss { get; private set; }
     private string jsonFilePath;
-    private int userFolderCounter;  // Tracks folder counters for each user
+    public int userFolderCounter { get; private set; }  // Tracks folder counters for each user
     public bool IsTaskActive { get; private set; } = false;
     public bool IsMotorTestActive { get; private set; } = false;
 
@@ -148,7 +149,8 @@ public class SharedInfomanager : MonoBehaviour
 
     public int currentGeneration { get; set; }
 
-
+    public int wall_tmtA = 6;
+    public int wall_tmtB = 7;
     public static List<WallData> SavedWalls { get; private set; } = new List<WallData>();
 
     public static void SaveWalls(List<WallData> walls)
@@ -171,9 +173,29 @@ public class SharedInfomanager : MonoBehaviour
         }
 
     }
+    public bool wall_calibrated { get; private set; } = false;
+
+    // Method to set marker data
+    public void wallcalibration(bool calibrated)
+    {
+        wall_calibrated = calibrated;
+    }    
+    
     public int startVideo = 0;
 
     public QuestionnaireControl questionnairecontrol;
+
+    public bool automaticupload;
+    [SerializeField] private DataUploader uploader;
+    [SerializeField] private string serverUrl = "http://192.168.1.23:5000/upload";
+
+
+    // Thresholds for relocating the canvas
+    public float desiredDistance = 1f;         // desired distance (in meters) from the camera
+    public float angleThreshold = 30f;           // if the angle between camera forward and canvas > 30 degrees, relocate
+    public float distanceThreshold = 0.3f;       // allowable deviation from desiredDistance
+
+
     private void Awake()
     {
         // Ensure only one instance exists
@@ -189,10 +211,11 @@ public class SharedInfomanager : MonoBehaviour
 
 
     // Method to set marker data
-    public void SetMarkerData(Pose position, float size)
+    public void SetMarkerData(Pose position, float size, Vector3 direction)
     {
         MarkerPosition = position;
         MarkerSize = size;
+        Markerdirection = direction;
         IsMarkerDetected = true;
         Debug.Log($"Marker data updated. Position: {position}, Size: {size}");
     }
@@ -525,9 +548,89 @@ public class SharedInfomanager : MonoBehaviour
         yield return new WaitForSeconds(1f); // Wait for 2 seconds
 
         // 3. Once finished, continue your logic
-        //    Clear existing tasks and begin next step.
-
+        if (automaticupload)
+        {
+            if (uploader == null)
+            {
+                Debug.LogError("Uploader is null!");
+            }
+            else{
+            Debug.Log("Data Transmission Triggered");
+            string userFolderPath=Path.Combine(Application.persistentDataPath, $"User{userFolderCounter.ToString("D3")}");
+            
+            string path_eyetracking=Path.Combine(userFolderPath, $"eyetracking_task{currentGeneration}.json");
+            string path_cameraframe=Path.Combine(userFolderPath, $"framedata_task{currentGeneration}.json");
+            string path_egocentric=Path.Combine(userFolderPath, $"egocentric_vdieo{currentGeneration}.mp4");
+            string path_performancedata=Path.Combine(userFolderPath, $"Performancedata_task{currentGeneration}.json");
+            string path_survey=Path.Combine(userFolderPath, $"Survey_task{currentGeneration}.csv");
+            
+            uploader.UploadData(path_eyetracking,serverUrl);
+            uploader.UploadData(path_cameraframe,serverUrl);
+            uploader.UploadData(path_egocentric,serverUrl);
+            uploader.UploadData(path_performancedata,serverUrl);
+            uploader.UploadData(path_survey,serverUrl);
+            }
+        }
         // 4. Then, start the next step (or description):
         selectionnoticeUI.selection_noticegeneration();
+    }
+
+    public void initializeUIposition(GameObject gameobject, float scale)
+    {
+
+        // Position the canvas desiredDistance in front of the camera
+        Transform camTransform = Camera.main.transform;
+        
+        // 1. Get camera position (head-level) and “flatten” camera forward
+        Vector3 camPos = camTransform.position;
+        Vector3 horizontalForward = Vector3.ProjectOnPlane(camTransform.forward, Vector3.up).normalized;
+
+        // 2. Position the notice so that its center is at the user’s head height
+        Vector3 newPos = new Vector3(camPos.x, camPos.y, camPos.z) + horizontalForward * desiredDistance;
+        gameobject.transform.position = newPos;
+
+        // 3. Rotate so that it faces the camera on a purely horizontal plane
+        Vector3 lookDir = newPos - camPos;    // direction from camera to UI
+        lookDir.y = 0f;                       // ignore camera pitch
+        gameobject.transform.rotation = Quaternion.LookRotation(lookDir.normalized, Vector3.up);
+
+        gameobject.transform.localScale = Vector3.one * scale; // adjust scale as needed
+
+    }
+
+
+
+    public void UpdateUIposition(GameObject gameobject)
+    {
+        // Only reposition if the canvas is active
+        if (!gameobject.activeSelf) return;
+
+        Transform camTransform = Camera.main.transform;
+        Vector3 camPos = camTransform.position;
+        Vector3 camForward = camTransform.forward;
+
+        // Compute direction and distance from the camera to the canvas
+        Vector3 directionToCanvas = gameobject.transform.position - camPos;
+        float currentDistance = directionToCanvas.magnitude;
+        directionToCanvas.Normalize();
+
+        // Compute the angle between camera's forward direction and the direction to the canvas
+        float angle = Vector3.Angle(camForward, directionToCanvas);
+
+        // Check if the canvas is out of view (angle too large) or at the wrong distance
+        if (angle > angleThreshold || Mathf.Abs(currentDistance - desiredDistance) > distanceThreshold)
+        {
+            // 1) Flatten camera forward on the horizontal plane (ignore tilt)
+            Vector3 horizontalForward = Vector3.ProjectOnPlane(camForward, Vector3.up).normalized;
+
+            // 2) Position the notice at the camera's Y-level, desiredDistance away
+            Vector3 newPos = camPos + horizontalForward * desiredDistance;
+            gameobject.transform.position = newPos;
+
+            // 3) Rotate the notice so it faces the camera horizontally, staying upright
+            Vector3 lookDir = newPos - camPos;
+            lookDir.y = 0f; // ignore pitch
+            gameobject.transform.rotation = Quaternion.LookRotation(lookDir.normalized, Vector3.up);
+        }
     }
 }

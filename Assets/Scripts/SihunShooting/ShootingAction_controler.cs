@@ -29,7 +29,11 @@ public class ShootingAction_controler : MonoBehaviour
 
     private bool hasTriggered = false;
     private GameObject lastHighlightedTarget = null;
-    public GameObject outlineRingPrefab; // Assign your OutlineRing prefab in the Inspector
+
+    public AudioClip soundClip;
+    private AudioSource audioSource;
+
+
 
     private void Start()
     {
@@ -40,7 +44,12 @@ public class ShootingAction_controler : MonoBehaviour
 
         triggerInputAction.performed += ActionOnPerformed;
         triggerInputAction.canceled += ActionOnCanceled;
-
+        audioSource = GetComponent<AudioSource>();
+        // If none exists, add one dynamically.
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
     private void ActionOnPerformed(InputAction.CallbackContext obj)
     {
@@ -67,6 +76,10 @@ public class ShootingAction_controler : MonoBehaviour
             float distanceToCenter = -1f; // Default invalid distance
             string hitResult = "-";  // New variable for tracking the result
 
+
+            // Make sound effect
+            audioSource.PlayOneShot(soundClip,1.0f);
+            
             // Perform a raycast from the pointer position
             if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, detectionRange))
             {
@@ -74,6 +87,8 @@ public class ShootingAction_controler : MonoBehaviour
                 Vector3 objectCenter = hit.collider.bounds.center;
                 distanceToCenter = Vector3.Distance(objectCenter, hit.point);
                 label = hit.collider.gameObject.name; 
+
+
 
                 // Check if the hit object is tagged as "Target"
                 if (hit.collider.CompareTag("Target"))

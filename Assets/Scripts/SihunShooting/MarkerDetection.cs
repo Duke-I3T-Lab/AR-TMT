@@ -133,8 +133,10 @@ public class MarkerDetection : MonoBehaviour
         }
 
         markerProcessed = true; // Set the flag to prevent multiple calls
+        Vector3 userPos = XROrigin.Camera.transform.position;
+        Vector3 centerDirection = markerPose.position - userPos;
 
-        SharedInfomanager.Instance.SetMarkerData(markerPose, markerSize);
+        SharedInfomanager.Instance.SetMarkerData(markerPose, markerSize, centerDirection);
         Debug.Log("Marker detected. Storing marker data.");
 
 

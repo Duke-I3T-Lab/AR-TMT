@@ -5,6 +5,7 @@ using UnityEngine.XR.OpenXR;
 using MagicLeap.OpenXR.Features.MarkerUnderstanding;
 using UnityEngine.XR.Management;
 using System;
+using TMPro;
 
 public class PlaneDetectionMarker : MonoBehaviour
 {
@@ -236,6 +237,7 @@ public class PlaneDetectionMarker : MonoBehaviour
             Debug.Log($"Wall - Center: {wall.Center}, Normal: {wall.Normal}, Width: {wall.Width}, Height: {wall.Height}");
         }
 
+        SharedInfomanager.Instance.wallcalibration(true);
 
         // ✅ Stop further marker detection
         _markerFeature.DestroyAllMarkerDetectors();

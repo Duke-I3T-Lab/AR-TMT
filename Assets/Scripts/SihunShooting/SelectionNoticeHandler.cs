@@ -177,11 +177,7 @@ public class SelectionNoticeHandler : MonoBehaviour
     {
         
         SelectionUI.SetActive(true);
-        Transform camTransform = Camera.main.transform;
-        // Set Notice UI position, rotation, and scale
-        SelectionUI.transform.position = camTransform.position + camTransform.forward * desiredDistance;
-        SelectionUI.transform.rotation = Quaternion.LookRotation(SelectionUI.transform.position - camTransform.position); // Align rotation to face the camera
-        SelectionUI.transform.localScale = Vector3.one * 0.0051f; // Set a consistent scale
+        SharedInfomanager.Instance.initializeUIposition(SelectionUI, 0.0051f);
 
 
 
@@ -238,29 +234,8 @@ public class SelectionNoticeHandler : MonoBehaviour
     }
     void Update()
     {
-        // Only reposition if the canvas is active (survey started)
-        if (!SelectionUI.activeSelf) return;
+        SharedInfomanager.Instance.UpdateUIposition(SelectionUI);
 
-        Transform camTransform = Camera.main.transform;
-        Vector3 camPos = camTransform.position;
-        Vector3 camForward = camTransform.forward;
-
-        // Compute the direction and distance from the camera to the canvas
-        Vector3 directionToCanvas = SelectionUI.transform.position - camPos;
-        float currentDistance = directionToCanvas.magnitude;
-        directionToCanvas.Normalize();
-
-        // Compute the angle between camera's forward direction and the direction to the canvas
-        float angle = Vector3.Angle(camForward, directionToCanvas);
-
-        // Check if the canvas is out of view (angle too large) or at the wrong distance
-        if (angle > angleThreshold || Mathf.Abs(currentDistance - desiredDistance) > distanceThreshold)
-        {
-            // Relocate the canvas in front of the camera
-            Vector3 newPos = camPos + camForward * desiredDistance;
-            SelectionUI.transform.position = newPos;
-            SelectionUI.transform.rotation = Quaternion.LookRotation(newPos - camPos);
-        }
     }
 
 }
