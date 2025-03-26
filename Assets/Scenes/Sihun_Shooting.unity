@@ -486,8 +486,10 @@ MonoBehaviour:
   - Spatial Placement
   questions:
   - How mentally demanding did you find the task overall?
-  - How distracting were the virtual objects during the task?
-  - How distracting was the real-world background during the task?
+  - How distracting were the virtual distractors during the task? please select any
+    rating on the scale If no distractors were present.
+  - How distracting (if at all) did you find the real-world environment (including
+    any background objects or surroundings) during the task?
   - How comfortable did you feel with the placement of target objects?
   HeaderTextbox: {fileID: 1856888668}
   QuestionTextbox: {fileID: 1333030743}
@@ -4396,8 +4398,7 @@ MonoBehaviour:
       m_Action: Trigger Input
       m_Flags: 0
     m_Flags: 0
-  outlineRingPrefab: {fileID: 7281100121903894452, guid: a329198735e095a458b17e6d29c8cd10,
-    type: 3}
+  soundClip: {fileID: 8300000, guid: 4310474905e266640852f43bd609a1a4, type: 3}
 --- !u!4 &1032067957
 Transform:
   m_ObjectHideFlags: 0
@@ -20738,12 +20739,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 6
+  m_fontSize: 4
   m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 1
-  m_fontSizeMax: 6
+  m_fontSizeMax: 4
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -20842,7 +20843,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 8, y: 3}
+  m_SizeDelta: {x: 6, y: 3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1398700266
 GameObject:
@@ -23350,12 +23351,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 8.95
+  m_fontSize: 6
   m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 2
-  m_fontSizeMax: 40
+  m_fontSizeMax: 6
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -23454,7 +23455,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 2}
-  m_SizeDelta: {x: 8, y: 1}
+  m_SizeDelta: {x: 6, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1859920365
 GameObject:
@@ -23892,7 +23893,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   motorspeedtargetPrefab: {fileID: 1480940750}
-  totalHits: 20
+  totalHits: 30
   placementHelper: {fileID: 1790771085}
   XROrigin: {fileID: 1272311664}
   selectionnoticeUI: {fileID: 2130879484}
@@ -23950,6 +23951,10 @@ MonoBehaviour:
       m_Action: Rotation Input
       m_Flags: 0
     m_Flags: 0
+  soundClip: {fileID: 8300000, guid: 4310474905e266640852f43bd609a1a4, type: 3}
+  automaticupload: 1
+  uploader: {fileID: 2068559349}
+  serverUrl: http://192.168.1.23:5000/upload
 --- !u!4 &1947578485
 Transform:
   m_ObjectHideFlags: 0
@@ -24010,15 +24015,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f89411d8d8707ea40974baaf585b16f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wall_tmtA: 6
-  wall_tmtB: 7
   targetGenerator: {fileID: 2032211718}
   eyeTrackerLogger: {fileID: 65373697}
   MainCamera: {fileID: 1045253384}
   CVCamera: {fileID: 1199882595}
   selectionnoticeUI: {fileID: 2130879484}
+  wall_tmtA: 6
+  wall_tmtB: 7
   startVideo: 0
   questionnairecontrol: {fileID: 44913142}
+  automaticupload: 1
+  uploader: {fileID: 2068559349}
+  serverUrl: http://192.168.1.23:5000/upload
 --- !u!1 &1949932580
 GameObject:
   m_ObjectHideFlags: 0
@@ -24831,6 +24839,50 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2068559347
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2068559348}
+  - component: {fileID: 2068559349}
+  m_Layer: 0
+  m_Name: DataTransmitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2068559348
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2068559347}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.999999, y: -0.8520031, z: 2.9900002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2068559349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2068559347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c87a2cc03b07248b9d83c4cca4d296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2069384113
 GameObject:
   m_ObjectHideFlags: 0
@@ -25204,6 +25256,7 @@ MonoBehaviour:
       m_Action: Rotation Input
       m_Flags: 0
     m_Flags: 0
+  calibrating: 0
   desiredDistance: 1
   angleThreshold: 30
   distanceThreshold: 0.3
@@ -25392,3 +25445,4 @@ SceneRoots:
   - {fileID: 44913140}
   - {fileID: 1172721111}
   - {fileID: 1618166173}
+  - {fileID: 2068559348}

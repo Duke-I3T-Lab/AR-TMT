@@ -124,6 +124,8 @@ namespace MagicLeap.Examples
             result = MediaRecorder.Start();
             MediaRecorder.GetInputSurface();
             isRecording = true;
+            SharedInfomanager.Instance.SetStartrecordingtime(Time.time);
+
             return result;
         }
 

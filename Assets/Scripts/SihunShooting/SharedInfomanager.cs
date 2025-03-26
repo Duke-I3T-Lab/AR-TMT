@@ -28,7 +28,7 @@ public class SharedInfomanager : MonoBehaviour
     private readonly List<List<object>> predefinedTargetSequences = new List<List<object>>
     {
         // 1. TMT-A(Baseline)
-        GenerateSequence(1, 3), 
+        GenerateSequence(1, 25), 
 
         // 2. TMT-B
         new List<object> { 1, "A", 2, "B", 3, "C", 4, "D", 5, "E", 6, "F", 7, "G", 8, "H", 9, "I", 10, "J", 11, "K", 12, "L", 13 },
@@ -128,6 +128,9 @@ public class SharedInfomanager : MonoBehaviour
 
     public float Time_startrecording { get; private set; }
     public float Time_endrecording { get; private set; }
+    public float Time_startask { get; private set; }
+    public float Time_endtask { get; private set; }
+
 
     public Queue<CameraData> CameraDataQueue = new Queue<CameraData>();
     public struct CameraData
@@ -234,6 +237,15 @@ public class SharedInfomanager : MonoBehaviour
     public void SetEndrecordingtime(float time)
     {
         Time_endrecording = time;
+    }
+
+    public void SetStarttasktime(float time)
+    {
+        Time_startask = time;
+    }
+    public void SetEndtasktime(float time)
+    {
+        Time_endtask= time;
     }
 
     // Sequence
@@ -379,6 +391,8 @@ public class SharedInfomanager : MonoBehaviour
             { "Timestamp", System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") }, // Add a timestamp for when the test ended
             { "Time_StartRecording", Time_startrecording },
             { "Time_StopRecording", Time_endrecording },
+            { "Time_StartTask", Time_startask },
+            { "Time_StopTask", Time_endtask },
             { "Locations_targets", TargetLocations },
             { "Locations_distractors", DistractorLocations },
             { "ShootingData", serializedShootingData } 
@@ -484,12 +498,18 @@ public class SharedInfomanager : MonoBehaviour
     {
         eyeTrackerLogger.StartRecording(currentGeneration);
         CVCamera.StartRecording(currentGeneration);
-        yield return new WaitForSeconds(2f); // Wait for 2 seconds
+        yield return new WaitForSeconds(1f); 
 
         MainCamera.StartVideoCapture(currentGeneration);
-        // Start the task
-        yield return new WaitForSeconds(0.5f); // Wait for 2 seconds
 
+
+
+        yield return new WaitForSeconds(2f); 
+        // Wait until the video capture has started (isCapturingVideo == true)
+        while (!MainCamera.isCapturingVideo)
+        {
+            yield return null; // Wait until the flag becomes true
+        }
         Debug.Log("Starting recording and generating targets...");
         if (currentGeneration==wall_tmtA || currentGeneration==wall_tmtB)
         {
@@ -500,12 +520,15 @@ public class SharedInfomanager : MonoBehaviour
             targetGenerator.GenerateTargets(false);
         }
         StartTask();
+        // start task notification
+        startVideo = 2;
 
         Debug.Log("Task started!");
     }
     public void FinishTask()
     {
-
+        // end task notification
+        startVideo = 1;
 
         StartCoroutine(eye_egocentricvideo_store());
 

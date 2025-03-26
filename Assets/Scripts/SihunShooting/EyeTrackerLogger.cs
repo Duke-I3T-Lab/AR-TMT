@@ -352,7 +352,8 @@ public class EyeTrackerLogger : MonoBehaviour
         // Eye  Tracking
 
         EyeTrackerData eyeTrackerData = eyeTrackerFeature.GetEyeTrackerData();
-        
+        float currentinTimestamp=Time.time;
+
         // Retrieve all eye-tracking data
         long currentTime = eyeTrackerData.GazeBehaviorData.Time / 1000000;
 
@@ -437,7 +438,6 @@ public class EyeTrackerLogger : MonoBehaviour
         Vector3 centerEyePosition = eyeTrackerData.PosesData.GazePose.Pose.position;
         Quaternion centerEyeRotation = eyeTrackerData.PosesData.GazePose.Pose.rotation;
         Quaternion headRotation = headrotationActionReference?.action.ReadValue<Quaternion>()?? Quaternion.identity;
-
         if (hasData)
         {
             fixationPoint = eyeTrackerData.PosesData.FixationPose.Pose.position;
@@ -451,6 +451,8 @@ public class EyeTrackerLogger : MonoBehaviour
 
         var eyeGazeData_from = new Dictionary<string, object>
         {
+            { "Timestamp", currentinTimestamp},
+
             {
                 "EyeGazePosition", new Dictionary<string, float>
                 {
@@ -460,7 +462,7 @@ public class EyeTrackerLogger : MonoBehaviour
                 }
             },
             {
-                "EyeGazeRotation", new Dictionary<string, float>
+                "HeadRotation", new Dictionary<string, float>
                 {
                     { "x", headRotation[0] },
                     { "y", headRotation[1] },
@@ -469,7 +471,7 @@ public class EyeTrackerLogger : MonoBehaviour
                 }
             },
             {
-                "HeadRotation", new Dictionary<string, float>
+                "EyeGazeRotation", new Dictionary<string, float>
                 {
                     { "x", centerEyeRotation[0] },
                     { "y", centerEyeRotation[1] },

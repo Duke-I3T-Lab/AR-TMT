@@ -636,7 +636,7 @@ MonoBehaviour:
   company: Magic Leap
   priority: 0
   required: 0
-  defaultBlendModeSelection: 3
+  defaultBlendModeSelection: 2
   FocusDistance: 0
   UseProtectedSurface: 0
   UseVignetteMode: 0

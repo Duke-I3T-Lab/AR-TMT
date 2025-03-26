@@ -15,7 +15,7 @@ namespace MagicLeap.Examples
     {
         private MLCamera.OutputFormat OutputFormat = MLCamera.OutputFormat.RGBA_8888;
         private MLCamera captureCamera;
-        private bool isCapturingVideo = false;
+        public bool isCapturingVideo = false;
         
         private int _targetImageWidth = 1440;
         private int _targetImageHeight = 1080;
@@ -155,11 +155,11 @@ namespace MagicLeap.Examples
 
                     isCapturingVideo = MLResult.DidNativeCallSucceed(result.Result, nameof(captureCamera.CaptureVideoStart));
                     // SharedInfomanager.Instance.SetStartrecordingtime(Time.time);
+                    SharedInfomanager.Instance.startVideo = 1;
+                    SharedInfomanager.Instance.SetStartrecordingtime(Time.time);
 
                     if (isCapturingVideo)
                     {
-                        SharedInfomanager.Instance.startVideo = 1;
-
                         Debug.Log($"Video recording started successfully. at {Time.time}");
                     }
                 }
@@ -182,7 +182,9 @@ namespace MagicLeap.Examples
                 return;
             }
 
-            SharedInfomanager.Instance.startVideo = 2;
+            SharedInfomanager.Instance.startVideo = 3;
+            SharedInfomanager.Instance.SetEndrecordingtime(Time.time);
+
             MLResult result = cameraRecorder.EndRecording();
 
             if (!result.IsOk)
