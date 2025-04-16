@@ -21,15 +21,14 @@ public class OscillateEffect : MonoBehaviour
     void Update()
     {
         float offset = Mathf.Sin(Time.time * floatSpeed + phaseOffset) * floatAmplitude;
+        float jitter = (Mathf.PerlinNoise(Time.time * 10f, phaseOffset) - 0.5f) * 0.01f;
 
-        // Apply movement along the randomly chosen axis
         Vector3 newPosition = startPosition;
-        if (oscillationAxis == 0) newPosition.x += offset; // X-axis
-        else if (oscillationAxis == 1) newPosition.y += offset; // Y-axis
-        else if (oscillationAxis == 2) newPosition.z += offset; // Z-axis
+
+        if (oscillationAxis == 0) newPosition.x += offset + jitter;
+        else if (oscillationAxis == 1) newPosition.y += offset + jitter;
+        else if (oscillationAxis == 2) newPosition.z += offset + jitter;
 
         transform.position = newPosition;
-
-
     }
 }

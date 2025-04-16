@@ -27,12 +27,15 @@ public class FlickeringEffect : MonoBehaviour
     }
     void Update()
     {
-
         if (objectRenderer != null)
         {
-            // Apply Transparency Flicker Effect (with Phase Offset)
-            float alpha = Mathf.PingPong((Time.time + phaseOffset) * flickerSpeed, 1.0f);
-            objectRenderer.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            if (Random.value < 0.1f) // 10% chance per frame to toggle
+            {
+                float alpha = Random.Range(0.3f, 1.0f);
+                objectRenderer.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            }
         }
     }
+
+    
 }

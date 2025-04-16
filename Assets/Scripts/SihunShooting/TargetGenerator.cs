@@ -82,7 +82,7 @@ public class TargetGenerator : MonoBehaviour
             // Ensure XR Origin and Target Prefab are assigned
             if (XROrigin == null)
             {
-                Debug.LogError("XROrigin is not assigned...");
+                Debug.LogError("XROrigin is not assigned. ..");
                 return;
             }
 
@@ -119,7 +119,6 @@ public void GenerateTargets(bool useWalls = false)
             case 1:
                 Random.InitState(10);
                 break;
-
             case 2:
                 Random.InitState(20);
                 break;
@@ -140,7 +139,7 @@ public void GenerateTargets(bool useWalls = false)
                 break;
 
         }
-    InitializeTargetGeneration();
+
     SharedInfomanager.Instance.SetTargetHitSequenceByIndex(SharedInfomanager.Instance.currentGeneration - 1);
 
     List<object> currentSequence = SharedInfomanager.Instance.TargetHitSequence;
@@ -148,8 +147,6 @@ public void GenerateTargets(bool useWalls = false)
     float markerSize = SharedInfomanager.Instance.MarkerSize;
     Pose markerPose = SharedInfomanager.Instance.MarkerPosition;
     Vector3 targetSize = GetTargetSize(TargetPrefab);
-
-    targets.Clear(); // Clear previous targets
 
     if (useWalls)
     {
@@ -349,17 +346,13 @@ public void GenerateTargets(bool useWalls = false)
 
     public void GenerateTopdowndistractors(Pose markerPose, float markerSize, int numberOfDistractors, bool strong, bool cluttering=false)
     {
-        Vector3 distractorsize = GetTargetSize(topdown_weak_DistractorPrefab);
         int attempts = 0; // Avoid infinite loops in case of space constraints
         int maxAttempts = numberOfDistractors * 10;
         Vector3 userPos = XROrigin.Camera.transform.position;
 
         while (distractors.Count < numberOfDistractors && attempts < maxAttempts)
         {
-
-            Vector3 validPosition = GetValidPosition_extra(userPos, cluttering, MaxRadius_clutter, minSpacing_clutter, markerPose, GetTargetSize(topdown_weak_DistractorPrefab));
-            if (validPosition != Vector3.zero)
-            {
+            Vector3 validPosition = GetValidPosition_extra(userPos, cluttering, MaxRadius_clutter, minSpacing_clutter, markerPose, GetTargetSize(topdown_weak_DistractorPrefab));          {
 
                 GameObject distractor = Instantiate(topdown_weak_DistractorPrefab, validPosition, Quaternion.identity);
                 distractor.name = $"Distractor {distractors.Count + 1}";
@@ -410,7 +403,6 @@ public void GenerateTargets(bool useWalls = false)
 
     void GenerateBottomUpDistractors(Pose markerPose, float markerSize, int numberOfDistractors, bool cluttering=false)
     {
-        Vector3 distractorsize = GetTargetSize(topdown_weak_DistractorPrefab);
 
         int attempts = 0; // Avoid infinite loops in case of space constraints
         int maxAttempts = numberOfDistractors * 10;
@@ -425,7 +417,10 @@ public void GenerateTargets(bool useWalls = false)
                 // Randomly select a distractor prefab
                 GameObject distractorPrefab = BottomupDistractorPrefabs[Random.Range(0, BottomupDistractorPrefabs.Length)];
                 GameObject distractor = Instantiate(distractorPrefab, validPosition, Quaternion.identity);
-                distractor.name = $"distractor {distractors.Count + 1}";
+                distractor.name = $"Distractor {distractors.Count + 1}";
+                SharedInfomanager.Instance.AddLocation(validPosition, distractor.name, true);
+
+                
                 distractor.transform.LookAt(XROrigin.Camera.transform.position);
                 distractor.transform.Rotate(90, 0, 0);
                 distractor.transform.localScale = new Vector3(markerSize, distractor.transform.localScale.y, markerSize);
@@ -448,17 +443,18 @@ public void GenerateTargets(bool useWalls = false)
                     distractor.GetComponent<Renderer>().material = glowingMaterial;
                 }
 
-                // Optional: Add movement or flicker effect
                 if (Random.Range(0, 3) == 1) // 33% chance
                 {
                     distractor.AddComponent<OscillateEffect>(); // Attach movement script (must be created separately)
                 }
-                                // Optional: Add movement or flicker effect
                 if (Random.Range(0, 3) == 1) // 33% chance
                 {
                     distractor.AddComponent<FlickeringEffect>(); // Attach movement script (must be created separately)
                 }
-
+                if (Random.Range(0, 3) == 1) // 33% chance
+                {
+                    distractor.AddComponent<SpinningEffect>(); // Attach movement script (must be created separately)
+                }
 
                 distractors.Add(distractor);
                 Debug.Log($"Generated distractor {distractors.Count} at {distractor.transform.position}");
@@ -472,60 +468,22 @@ public void GenerateTargets(bool useWalls = false)
 
 
 
-    public void Generate_neutral_Distractors(Pose markerPose, float markerSize, int numberOfClutterDistractors)
+
+    public void ShuffleDistractors()
     {
-        int attempts = 0;
-        int maxAttempts = numberOfClutterDistractors * 10;
-
-        Vector3 userPos = XROrigin.Camera.transform.position;
-
-        while (distractors.Count < numberOfClutterDistractors && attempts < maxAttempts)
+        // Remove original distractors
+        foreach (var distractor in distractors)
         {
-            Vector3 validPosition = GetValidPosition_extra(userPos, false, MaxRadius_clutter, minSpacing_clutter, markerPose, GetTargetSize(topdown_weak_DistractorPrefab));
-            if (validPosition != Vector3.zero)
-            {
-                GameObject clutterPrefab = clutterPrefabs[Random.Range(0, clutterPrefabs.Length)];
-                GameObject distractor = Instantiate(clutterPrefab, validPosition, Quaternion.identity);
-                distractor.name = $"ClutterDistractor {distractors.Count + 1}";
-
-                // ✅ Ensure clutter is properly scaled & semi-transparent
-                distractor.transform.localScale = new Vector3(markerSize, distractor.transform.localScale.y, markerSize);
-                distractor.transform.LookAt(XROrigin.Camera.transform.position);
-                SetTransparentMaterial(distractor);
-
-                // ✅ Adjust scaling to avoid huge clutter pieces
-                float sizeMultiplier = Random.Range(0.5f, 0.8f);
-                distractor.transform.localScale = new Vector3(sizeMultiplier, sizeMultiplier, sizeMultiplier);
-
-                // ✅ Add to distractor list
-                distractors.Add(distractor);
-            }
-
-            attempts++;
+            Destroy(distractor);
         }
+        distractors.Clear();
 
-        Debug.Log($"Generated {distractors.Count} clustered clutter-based distractors.");
+        // Regenerate distractors with different locations and shapes
+        GenerateBottomUpDistractors(SharedInfomanager.Instance.MarkerPosition, SharedInfomanager.Instance.MarkerSize, 20);
+    
     }
 
-
-
-    // ✅ Ensure clutter is semi-transparent and blends into background
-    private void SetTransparentMaterial(GameObject obj)
-    {
-        Renderer renderer = obj.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            Material material = new Material(renderer.material);
-            Color color = material.color;
-            color.a = 1f; // Semi-transparent
-            material.color = color;
-            material.SetFloat("_Surface", 0); 
-            material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
-            renderer.material = material;
-        }
-    }
-
-
+    // 
     public void InitializeTargetGeneration()
     {
         // Clear existing targets
@@ -546,11 +504,9 @@ public void GenerateTargets(bool useWalls = false)
         hitTargets.Clear();
 
         // Initialization
-        SharedInfomanager.Instance.ClearSequence();
-        SharedInfomanager.Instance.ClearPerformanceData();
-        SharedInfomanager.Instance.ClearLocations();
-        SharedInfomanager.Instance.Clearshootingdata();
+        SharedInfomanager.Instance.ClearTaskData();
     }
+    
     private Vector3 GetTargetSize(GameObject targetPrefab)
     {
         Renderer renderer = targetPrefab.GetComponentInChildren<Renderer>();
@@ -565,48 +521,7 @@ public void GenerateTargets(bool useWalls = false)
         }
     }
 
-    // private bool IsPositionNotCluttered(Vector3 validPosition, float minDistance, float minAngularSeparation)
-    // {
 
-
-    //     Debug.Log("Placing targets in free space...");
-
-    //     // Pre-calculate the real-world basis using the marker (origin) and the user’s position.
-    //     Vector3 userPos = XROrigin.Camera.transform.position;
-    //     Pose markerPose = SharedInfomanager.Instance.MarkerPosition;
-    //     Vector3 centerDirection = markerPose.position - userPos;
-    //     centerDirection.y = 0f;
-    //     centerDirection.Normalize();
-    //     Vector3 realUp = Vector3.up;
-    //     Vector3 realRight = Vector3.Cross(realUp, centerDirection).normalized;
-
-
-    //     // Convert the candidate from world space to local space.
-    //     Vector3 candidateLocal = new Vector3(
-    //         Vector3.Dot(validPosition - userPos, realRight),
-    //         Vector3.Dot(validPosition - userPos, realUp),
-    //         Vector3.Dot(validPosition - userPos, centerDirection)
-    //     );
-
-
-    //     // ✅ 1. Check Distance from Existing targets & distractors
-    //     foreach (var existing in targets.Concat(distractors))
-    //     {
-    //         Vector3 existingLocal = new Vector3(
-    //                 Vector3.Dot(existing.transform.position - userPos, realRight),
-    //                 Vector3.Dot(existing.transform.position - userPos, realUp),
-    //                 Vector3.Dot(existing.transform.position - userPos, centerDirection)
-    //             );
-
-    //         if (Vector3.Distance(existingLocal, candidateLocal) < minDistance || 
-    //             Vector3.Angle(existingLocal.normalized, candidateLocal.normalized) < minAngularSeparation)
-    //         {
-    //             return false; // ❌ Too close to another distractor
-    //         }
-    //     }
-
-    //     return true; // ✅ Position is valid!
-    // }
     private Vector3 GetValidPosition_extra(Vector3 userPos, bool cluttering, float clutterRadius, float minSpacing, Pose markerPose, Vector3 distractorSize)
     {
         Vector3 validPosition = Vector3.zero;

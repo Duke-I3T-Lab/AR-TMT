@@ -133,8 +133,6 @@ namespace MagicLeap.Examples
             cameraRecorder.StartRecording(recordedFilePath, config);
             // Subscribe to the OnInfo event
             
-            isCapturingVideo=true;
-
             MLCamera.CaptureConfig captureConfig = new MLCamera.CaptureConfig();
             captureConfig.CaptureFrameRate = _targetFrameRate;
             captureConfig.StreamConfigs = new MLCamera.CaptureStreamConfig[1];

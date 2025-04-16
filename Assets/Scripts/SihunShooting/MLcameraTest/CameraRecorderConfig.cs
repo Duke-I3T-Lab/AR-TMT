@@ -124,7 +124,6 @@ namespace MagicLeap.Examples
             result = MediaRecorder.Start();
             MediaRecorder.GetInputSurface();
             isRecording = true;
-            SharedInfomanager.Instance.SetStartrecordingtime(Time.time);
 
             return result;
         }
@@ -143,7 +142,6 @@ namespace MagicLeap.Examples
             // MediaRecorder.Reset();
 
             Debug.LogError($"Video recording ended successfully. at {Time.time}");
-            SharedInfomanager.Instance.SetEndrecordingtime(Time.time);
 
             MediaRecorder.ToString();
             isRecording = false;

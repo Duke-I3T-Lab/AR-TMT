@@ -156,7 +156,21 @@ public class ShootingAction_controler : MonoBehaviour
         UpdateTargetFrameColor(target, Color.yellow);
 
         SharedInfomanager.Instance.AdvanceToNextTarget();
+        
+        
+        // // Shuffle the distractors for bottom-up attention
+        // if (SharedInfomanager.Instance.currentGeneration == 5)
+        // {
+        //     string expectedTargetStr = expectedTarget.ToString();
+        //     Debug.Log($"Expected Target (as string): {expectedTargetStr}");
 
+        //     if (expectedTargetStr.Equals("8") || expectedTargetStr.Equals("16"))
+        //     {
+        //         Debug.Log($"Expected Target matched for shuffling");
+        //         targetGenerator.ShuffleDistractors();
+        //     }
+  
+        // }
 
         // 3) Store reference for next time
         lastHighlightedTarget = target;

@@ -108,11 +108,10 @@ public class SharedInfomanager : MonoBehaviour
     }
     // Performance metric
     public float CompletionTime { get; private set; }
-    public float Current_time { get; private set; }
 
-    public int N_hitdistractor { get; private set; }
-    public int N_hitworngorder { get; private set; }
-    public int N_hitmiss { get; private set; }
+    public int N_hitdistractor { get; private set; } = 0;
+    public int N_hitworngorder { get; private set; } = 0;
+    public int N_hitmiss { get; private set; } =0;
     private string jsonFilePath;
     public int userFolderCounter { get; private set; }  // Tracks folder counters for each user
     public bool IsTaskActive { get; private set; } = false;
@@ -284,13 +283,6 @@ public class SharedInfomanager : MonoBehaviour
     {
         currentSequenceIndex++;
     }
-    public void ClearSequence()
-    {
-        TargetHitSequence?.Clear();
-        currentSequenceIndex = 0;
-    }
-
-
 
 
     // Perofrmance measurement 
@@ -312,21 +304,22 @@ public class SharedInfomanager : MonoBehaviour
     }
 
 
+    public void ClearTaskData()
+    {   
+        // Hit Sequence
+        TargetHitSequence?.Clear();
+        currentSequenceIndex = 0;
 
-    public void ClearPerformanceData()
-    {
-        Current_time = Time.time;
+        // Hit Error
         N_hitdistractor = 0;
         N_hitmiss = 0;
         N_hitworngorder = 0;
-    }
-    public void ClearLocations()
-    {
+
+        // Location Data
         TargetLocations.Clear();
         DistractorLocations.Clear();
-    }
-    public void Clearshootingdata()
-    {
+
+        // Shooting Data
         shootingdata.Clear();
     }
 
@@ -367,7 +360,7 @@ public class SharedInfomanager : MonoBehaviour
     // Performance Data
     public void SavePerformanceData(int taskIndex)
     {
-        CompletionTime = Time.time -Current_time;
+        CompletionTime = Time_endtask-Time_startask;
         // Create a dictionary to store the final performance data
         var serializedTargets = TargetLocations.Select(loc => new { X = loc.X, Y = loc.Y, Z = loc.Z, Label = loc.Label }).ToList();
         var serializedDistractors = DistractorLocations.Select(loc => new { X = loc.X, Y = loc.Y, Z = loc.Z, Label = loc.Label }).ToList();
@@ -384,11 +377,11 @@ public class SharedInfomanager : MonoBehaviour
 
         var performanceData = new Dictionary<string, object>
         {
+            { "Timestamp", System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") }, // Add a timestamp for when the test ended
             { "CompletionTime", CompletionTime },
             { "NumberOfHittingDistractors", N_hitdistractor },
             { "NumberOfMissHits", N_hitmiss },
             { "NumberOfWrongOrderHits", N_hitworngorder },
-            { "Timestamp", System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") }, // Add a timestamp for when the test ended
             { "Time_StartRecording", Time_startrecording },
             { "Time_StopRecording", Time_endrecording },
             { "Time_StartTask", Time_startask },
@@ -417,7 +410,7 @@ public class SharedInfomanager : MonoBehaviour
         }
     }
 
-
+    // for UI handlers 
     public void StartTask()
     {
         IsTaskActive = true;
@@ -519,25 +512,25 @@ public class SharedInfomanager : MonoBehaviour
         {
             targetGenerator.GenerateTargets(false);
         }
+
+        SetStarttasktime(Time.time);
+        startVideo = 2;
+
         StartTask();
         // start task notification
-        startVideo = 2;
 
         Debug.Log("Task started!");
     }
     public void FinishTask()
     {
-        // end task notification
+        SetEndtasktime(Time.time);
         startVideo = 1;
+        // end task notification
 
+        EndTask();
         StartCoroutine(eye_egocentricvideo_store());
-
-
-
         SavePerformanceData(currentGeneration);
-        SharedInfomanager.Instance.EndTask();
         targetGenerator.InitializeTargetGeneration();
-
         StartCoroutine(HandleQuestionnaireAndNextSteps());
     }
 
