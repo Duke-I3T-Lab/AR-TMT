@@ -88,7 +88,7 @@ public class PlaceObjectAvoidingMesh : MonoBehaviour
             Vector3 candidateLocalPos = randomOffset * distance;
 
             // Y in [-y_range, +y_range]
-            float chosenY = Random.Range(-y_range, y_range);
+            float chosenY = Random.Range(-y_range-0.2f, y_range-0.2f);
             candidateLocalPos.y = chosenY;
 
             // If you have no environment checks here, we simply return it:
@@ -128,62 +128,20 @@ public class PlaceObjectAvoidingMesh : MonoBehaviour
         return Vector3.zero;
     }
 
-    // public Vector3 GetValidPosition(Vector3 origin, Vector3 targetSize, float y_range, float degree, float r_min, float r_max)
-    // {
-    //     Vector3 userPosition = Camera.main.transform.position;
-    //     Vector3 centerDirection = origin - userPosition;
-    //     centerDirection.y = 0; // Project onto the horizontal plane
-    //     centerDirection.Normalize();
-
-    //     float minHeight = userPosition.y - y_range;
-    //     float maxHeight = userPosition.y + y_range;
-
-    //     const int maxAttempts = 100; // Prevent infinite loops
-
-    //     for (int i = 0; i < maxAttempts; i++)
-    //     {
-    //         // Generate a random direction within the allowed angle range
-    //         Vector3 randomOffset = Random.insideUnitSphere * r_max;
-    //         randomOffset.y = 0; // Keep it on the horizontal plane
-    //         randomOffset.Normalize();
-
-    //         float angle = Vector3.Angle(centerDirection, randomOffset);
-    //         if (angle > degree / 2) // If outside allowed field of view, retry
-    //             continue;
-
-    //         // Ensure the distance is within r_min and r_max
-    //         float distance = Random.Range(r_min, r_max);
-    //         Vector3 candidatePosition = userPosition + randomOffset * distance;
-            
-    //         float chosenY=Random.Range(minHeight, maxHeight);
-    //         candidatePosition.y = chosenY;
-            
-    //         bool valid = IsPositionClear(candidatePosition, targetSize) && HasLineOfSight(userPosition, candidatePosition);
-    //         // <<< Added: Log all the random data for this attempt >>>
-
-    //         if (valid)
-    //         {
-
-    //             return candidatePosition;
-    //         }
-    //     }
-    //     Debug.LogWarning("No valid position found after max attempts.");
-    //     return Vector3.zero;
-    // }
-
+ 
     // Check if the generated position is visible from the camera
     private bool HasLineOfSight(Vector3 fromPosition, Vector3 toPosition)
     {
-        Vector3 direction = toPosition - fromPosition;
-        float distance = direction.magnitude;
-        direction.Normalize();
+        // Vector3 direction = toPosition - fromPosition;
+        // float distance = direction.magnitude;
+        // direction.Normalize();
 
-        // Cast a ray to check if there are obstacles in between
-        if (Physics.Raycast(fromPosition, direction, out RaycastHit hit, distance, LayerMask.GetMask("MeshLayer", "Default")))
-        {
-            Debug.Log($"Blocked by {hit.collider.name} at {hit.point}");
-            return false; // Obstacle detected, position is not in line of sight
-        }
+        // // Cast a ray to check if there are obstacles in between
+        // if (Physics.Raycast(fromPosition, direction, out RaycastHit hit, distance, LayerMask.GetMask("MeshLayer", "Default")))
+        // {
+        //     Debug.Log($"Blocked by {hit.collider.name} at {hit.point}");
+        //     return false; // Obstacle detected, position is not in line of sight
+        // }
 
         return true; // No obstacles, position is visible
     }

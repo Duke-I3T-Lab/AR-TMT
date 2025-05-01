@@ -132,7 +132,9 @@ public class SelectionNoticeHandler : MonoBehaviour
                                 SharedInfomanager.Instance.currentGeneration = buttonIndex;
                             }
                         }
+                        // StartCoroutine(DelayedNoticeGeneration());
                         noticeUI.noticegeneration();
+
                     }
 
                     if (SelectionUI != null)
@@ -185,10 +187,10 @@ public class SelectionNoticeHandler : MonoBehaviour
         {
             SelectionUI.SetActive(true); // Activate UI
             Debug.Log("Notice UI displayed.");
-            UpdateDescriptionText("Select the stage after refresh time: 30s");
+            UpdateDescriptionText("Select the stage after refresh time: 60s");
 
             // Start the countdown coroutine
-            StartCoroutine(CountdownTimer(30));
+            StartCoroutine(CountdownTimer(60));
         }
 
 
@@ -238,4 +240,9 @@ public class SelectionNoticeHandler : MonoBehaviour
 
     }
 
+    // private IEnumerator DelayedNoticeGeneration()
+    // {
+    //     yield return new WaitForSeconds(1f); // 1-second delay
+    //     noticeUI.noticegeneration();
+    // }
 }

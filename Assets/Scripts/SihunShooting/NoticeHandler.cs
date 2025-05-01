@@ -5,6 +5,7 @@ using UnityEngine.InputSystem.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using System.Collections;
 using UnityEngine.XR.MagicLeap;
+using System.Linq; // Required for Contains on arrays
 
 public class NoticeHandler : MonoBehaviour
 {
@@ -37,14 +38,14 @@ public class NoticeHandler : MonoBehaviour
     public float desiredDistance = 1f;         // desired distance (in meters) from the camera
     public float angleThreshold = 30f;           // if the angle between camera forward and canvas > 30 degrees, relocate
     public float distanceThreshold = 0.3f;       // allowable deviation from desiredDistance
-
+    private int[] validGenerations;
 
     void Start()
     {
         if (noticeUI != null)
         {
             noticeUI.SetActive(false); // Disable the entire Notice UI at the start
-            Debug.Log("Notice UI parent object is set  to inactive.");
+            Debug.Log("Notice UI parent object is set  to inactive..");
         }
         positionInputAction.Enable();
         rotationInputAction.Enable();
@@ -57,6 +58,14 @@ public class NoticeHandler : MonoBehaviour
         cameraScript = FindObjectOfType<TestCameraRecording_CVcamera>();
         planedetectionscript = FindObjectOfType<PlaneDetectionMarker>();
 
+        validGenerations = new[] 
+        {
+            SharedInfomanager.Instance.wall_tmtA,
+            SharedInfomanager.Instance.wall_tmtB,
+            SharedInfomanager.Instance.wall_tmtA_nuetral,
+            SharedInfomanager.Instance.wall_tmtA_topdown,
+            SharedInfomanager.Instance.wall_tmtA_bottomup
+        };
     }
 
     private void OnDestroy()
@@ -106,9 +115,13 @@ public class NoticeHandler : MonoBehaviour
                 Debug.Log($"Raycast hit: {hit.collider.gameObject.name}");
                 if (hit.collider != null && hit.collider.gameObject == okButton.gameObject)
                 {
-                    if(SharedInfomanager.Instance.currentGeneration == SharedInfomanager.Instance.wall_tmtA || SharedInfomanager.Instance.currentGeneration == SharedInfomanager.Instance.wall_tmtB)
+
+                    
+                    // Check if the currentGeneration is in the valid cases
+                    if (validGenerations.Contains(SharedInfomanager.Instance.currentGeneration))
                     {
-                        if(SharedInfomanager.Instance.wall_calibrated==false){
+                        if (SharedInfomanager.Instance.wall_calibrated == false)
+                        {
                             return;
                         }
                     }
@@ -152,7 +165,8 @@ public class NoticeHandler : MonoBehaviour
             motorspeedtest.StartMotorSpeedTest();
         }
         // Start the delayed task
-        else if(SharedInfomanager.Instance.currentGeneration == SharedInfomanager.Instance.wall_tmtA || SharedInfomanager.Instance.currentGeneration == SharedInfomanager.Instance.wall_tmtB)
+                    
+        else if(validGenerations.Contains(SharedInfomanager.Instance.currentGeneration))
         {
             if(calibrating)
             {
@@ -211,12 +225,13 @@ public class NoticeHandler : MonoBehaviour
         }
         Debug.Log($"Notice UI displayed at position: {noticeUI.transform.position}");
         
-
+        
         // For plane situated task, disable cvcamera to enable marker detection
-        if (SharedInfomanager.Instance.currentGeneration == SharedInfomanager.Instance.wall_tmtA || SharedInfomanager.Instance.currentGeneration == SharedInfomanager.Instance.wall_tmtB)
+        if (validGenerations.Contains(SharedInfomanager.Instance.currentGeneration))
         {
             if (SharedInfomanager.SavedWalls == null || SharedInfomanager.SavedWalls.Count == 0)
             {
+                Debug.Log("No saved walls found. Starting camera and plane detection.");
                 calibrating=true;
                 StopCamera();
                 planedetectionscript.StartPlaneDetection();

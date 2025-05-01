@@ -45,8 +45,8 @@ public class SharedInfomanager : MonoBehaviour
         // 6. TMT-A in Walls
         GenerateSequence(1, 25),
 
-        // 7. TMT-B in Walls
-        new List<object> { 1, "A", 2, "B", 3, "C", 4, "D", 5, "E", 6, "F", 7, "G", 8, "H", 9, "I", 10, "J", 11, "K", 12, "L", 13 },
+        // // 7. TMT-B in Walls
+        // new List<object> { 1, "A", 2, "B", 3, "C", 4, "D", 5, "E", 6, "F", 7, "G", 8, "H", 9, "I", 10, "J", 11, "K", 12, "L", 13 },
 
 
 
@@ -151,12 +151,18 @@ public class SharedInfomanager : MonoBehaviour
 
     public int currentGeneration { get; set; }
 
-    public int wall_tmtA = 6;
-    public int wall_tmtB = 7;
+    public int wall_tmtA = 1;
+    public int wall_tmtB = 2;
+    public int wall_tmtA_nuetral = 3;
+    public int wall_tmtA_topdown = 4;
+    public int wall_tmtA_bottomup = 5;
+
+
     public static List<WallData> SavedWalls { get; private set; } = new List<WallData>();
 
     public static void SaveWalls(List<WallData> walls)
     {
+
         SavedWalls = new List<WallData>(walls);
     }
     public class WallData
@@ -189,7 +195,6 @@ public class SharedInfomanager : MonoBehaviour
 
     public bool automaticupload;
     [SerializeField] private DataUploader uploader;
-    [SerializeField] private string serverUrl = "http://192.168.1.23:5000/upload";
 
 
     // Thresholds for relocating the canvas
@@ -219,7 +224,7 @@ public class SharedInfomanager : MonoBehaviour
         MarkerSize = size;
         Markerdirection = direction;
         IsMarkerDetected = true;
-        Debug.Log($"Marker data updated. Position: {position}, Size: {size}");
+        Debug.Log($"Marker data updated.. Position: {position}, Size: {size}");
     }
     // Reset marker detection state (optional)
     public void ClearMarkerData()
@@ -375,6 +380,14 @@ public class SharedInfomanager : MonoBehaviour
             Result = data.result
         }).ToList();
 
+        var serializedWalls = SavedWalls.Select(wall => new
+        {
+            Center = new { X = wall.Center.x, Y = wall.Center.y, Z = wall.Center.z },
+            Normal = new { X = wall.Normal.x, Y = wall.Normal.y, Z = wall.Normal.z },
+            wall.Width,
+            wall.Height
+        }).ToList();
+
         var performanceData = new Dictionary<string, object>
         {
             { "Timestamp", System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") }, // Add a timestamp for when the test ended
@@ -388,8 +401,8 @@ public class SharedInfomanager : MonoBehaviour
             { "Time_StopTask", Time_endtask },
             { "Locations_targets", TargetLocations },
             { "Locations_distractors", DistractorLocations },
-            { "ShootingData", serializedShootingData } 
-
+            { "ShootingData", serializedShootingData }, 
+            { "SavedWalls", serializedWalls }
         };
         // Generate a file path for the result
  
@@ -495,8 +508,6 @@ public class SharedInfomanager : MonoBehaviour
 
         MainCamera.StartVideoCapture(currentGeneration);
 
-
-
         yield return new WaitForSeconds(2f); 
         // Wait until the video capture has started (isCapturingVideo == true)
         while (!MainCamera.isCapturingVideo)
@@ -504,7 +515,8 @@ public class SharedInfomanager : MonoBehaviour
             yield return null; // Wait until the flag becomes true
         }
         Debug.Log("Starting recording and generating targets...");
-        if (currentGeneration==wall_tmtA || currentGeneration==wall_tmtB)
+        
+        if (currentGeneration==wall_tmtA || currentGeneration==wall_tmtB || currentGeneration==wall_tmtA_nuetral || currentGeneration==wall_tmtA_topdown || currentGeneration==wall_tmtA_bottomup)
         {
             targetGenerator.GenerateTargets(true);
         }        
@@ -580,11 +592,11 @@ public class SharedInfomanager : MonoBehaviour
             string path_performancedata=Path.Combine(userFolderPath, $"Performancedata_task{currentGeneration}.json");
             string path_survey=Path.Combine(userFolderPath, $"Survey_task{currentGeneration}.csv");
             
-            uploader.UploadData(path_eyetracking,serverUrl);
-            uploader.UploadData(path_cameraframe,serverUrl);
-            uploader.UploadData(path_egocentric,serverUrl);
-            uploader.UploadData(path_performancedata,serverUrl);
-            uploader.UploadData(path_survey,serverUrl);
+            uploader.UploadData(path_eyetracking);
+            uploader.UploadData(path_cameraframe);
+            uploader.UploadData(path_egocentric);
+            uploader.UploadData(path_performancedata);
+            uploader.UploadData(path_survey);
             }
         }
         // 4. Then, start the next step (or description):
@@ -593,16 +605,16 @@ public class SharedInfomanager : MonoBehaviour
 
     public void initializeUIposition(GameObject gameobject, float scale)
     {
-
         // Position the canvas desiredDistance in front of the camera
         Transform camTransform = Camera.main.transform;
-        
-        // 1. Get camera position (head-level) and “flatten” camera forward
+
+        // 1. Get camera position and direction to the marker
         Vector3 camPos = camTransform.position;
-        Vector3 horizontalForward = Vector3.ProjectOnPlane(camTransform.forward, Vector3.up).normalized;
+        Vector3 directionToMarker = MarkerPosition.position - camPos;
+        Vector3 horizontalForward = Vector3.ProjectOnPlane(directionToMarker, Vector3.up).normalized;
 
         // 2. Position the notice so that its center is at the user’s head height
-        Vector3 newPos = new Vector3(camPos.x, camPos.y, camPos.z) + horizontalForward * desiredDistance;
+        Vector3 newPos = camPos + horizontalForward * desiredDistance;
         gameobject.transform.position = newPos;
 
         // 3. Rotate so that it faces the camera on a purely horizontal plane
@@ -611,7 +623,6 @@ public class SharedInfomanager : MonoBehaviour
         gameobject.transform.rotation = Quaternion.LookRotation(lookDir.normalized, Vector3.up);
 
         gameobject.transform.localScale = Vector3.one * scale; // adjust scale as needed
-
     }
 
 

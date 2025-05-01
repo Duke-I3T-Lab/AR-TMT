@@ -21,7 +21,7 @@ public class PlaneDetectionMarker : MonoBehaviour
     [Header("Marker IDs")]
     public int TopMarkerID = 1;   // ✅ Identical ID for all upper markers
     public int BottomMarkerID = 2; // ✅ Identical ID for all lower markers
-
+    public int countwalls=4;
     private MagicLeapMarkerUnderstandingFeature _markerFeature;
     private MarkerDetector _markerDetector;
     private MarkerDetectorSettings _detectorSettings;
@@ -78,7 +78,12 @@ public class PlaneDetectionMarker : MonoBehaviour
             }
         };
 
-        _markerDetector = _markerFeature.CreateMarkerDetector(_detectorSettings);
+        if (_markerDetector == null)
+        {
+
+            _markerDetector = _markerFeature.CreateMarkerDetector(_detectorSettings);
+        }
+
         detectionEnabled = true; // ✅ Enable detection
 
         Debug.Log("Marker Detector created.");
@@ -141,7 +146,7 @@ public class PlaneDetectionMarker : MonoBehaviour
             }
 
             // ✅ If the marker is at a new location and we have space, add it as a new instance
-            if (!updated && storedMarkerInstances[markerId].Count < 4)
+            if (!updated && storedMarkerInstances[markerId].Count < countwalls)
             {
                 storedMarkerInstances[markerId].Add(newPose);
                 Debug.Log($"[Marker Detected] New marker {markerId} detected at {newPose.position}");
@@ -161,11 +166,11 @@ public class PlaneDetectionMarker : MonoBehaviour
             UpdateMarkerVisuals();
         }
 
-        // ✅ Ensure **all 4 top and 4 bottom markers** are detected before proceeding
+        // ✅ Ensure **all top and bottom markers** are detected before proceeding
         if (storedMarkerInstances.ContainsKey((ulong)TopMarkerID) &&
             storedMarkerInstances.ContainsKey((ulong)BottomMarkerID) &&
-            storedMarkerInstances[(ulong)TopMarkerID].Count == 4 &&
-            storedMarkerInstances[(ulong)BottomMarkerID].Count == 4)
+            storedMarkerInstances[(ulong)TopMarkerID].Count == countwalls &&
+            storedMarkerInstances[(ulong)BottomMarkerID].Count == countwalls)
         {
             UpdateWallsFromMarkers();
             detectionEnabled = false; // ✅ Stop further updates after detection
@@ -185,10 +190,10 @@ public class PlaneDetectionMarker : MonoBehaviour
 
         Debug.Log($"[Wall Debug] Top markers detected: {topMarkers.Count}, Bottom markers detected: {bottomMarkers.Count}");
 
-        // ✅ Ensure exactly 4 markers are present for both types
-        if (topMarkers.Count < 4 || bottomMarkers.Count < 4)
+        // ✅ Ensure all markers are present for both types
+        if (topMarkers.Count < countwalls || bottomMarkers.Count < countwalls)
         {
-            Debug.Log("Waiting for all 4 top and 4 bottom markers...");
+            Debug.Log("Waiting for all  top and bottom markers...");
             return;
         }
 
@@ -196,9 +201,9 @@ public class PlaneDetectionMarker : MonoBehaviour
 
         Debug.Log($"[Wall Debug] Found {validWallPairs.Count} valid wall pairs.");
 
-        if (validWallPairs.Count < 4)
+        if (validWallPairs.Count < countwalls)
         {
-            Debug.LogWarning($"Only {validWallPairs.Count} walls detected. Waiting for all 4.");
+            Debug.LogWarning($"Only {validWallPairs.Count} walls detected. Waiting for all walls.");
             return;
         }
         
@@ -361,10 +366,9 @@ public class PlaneDetectionMarker : MonoBehaviour
         
         // Compute a normal from the marker's orientation.
         // Assuming the marker's forward (local Z) points perpendicularly from the wall.
-        Vector3 markerNormal = topPose.rotation * Vector3.back;
-        // markerNormal.y = 0f; // Force horizontal normal.
-        markerNormal.Normalize();
-        Vector3 blendedNormal = (normalFromPositions + markerNormal).normalized;
+        // Vector3 markerNormal = topPose.rotation * Vector3.back;
+        // markerNormal.Normalize();
+        // Vector3 blendedNormal = (normalFromPositions * 0.8f + markerNormal * 0.2f).normalized;
 
         Debug.Log($"[Wall Debug] Midpoint: {midpoint}, Width: {width}, Height: {height}, Normal Normal: {normalFromPositions}");
 
@@ -440,30 +444,38 @@ public class PlaneDetectionMarker : MonoBehaviour
 
         // ✅ Clear all stored marker data
         storedMarkerInstances.Clear();
-
         Debug.Log("[Cleanup] All walls and markers have been removed.");
     }
+
 
     public void OnRescanButtonClicked()
     {
         // 1) Clean up all previously detected markers and walls
         DestroyGeneratedMarkersAndWalls();
         Debug.Log("OnRescanButtonClicked triggered");
-        
+        // 2) Re-enable the script if it was disabled
+        if (!enabled)
+        {
+            enabled = true; // Re-enable the script
+        }
         // 2) KEEP the existing marker detector alive; do NOT destroy it.
         //    (Comment out or remove these lines)
-        // if (_markerFeature != null)
-        // {
-        //     _markerFeature.DestroyAllMarkerDetectors();
-        //     _markerDetector = null;
-        // }
+        if (_markerFeature != null && _markerDetector != null)
+        {
+            _markerFeature.DestroyAllMarkerDetectors();
+            _markerDetector = null;
+        }
+
+
+        // 3) Reinitialize the marker detector
+        detectionEnabled = false;
+        StartPlaneDetection();
 
         // 3) Optionally, keep this script enabled and detectionEnabled set to true 
         //    so the marker detection continues running.
         //    (Comment out or remove if you do NOT want to re-init detection.)
-        // this.enabled = true;
-        // detectionEnabled = false;
-        // StartPlaneDetection();
+        // 4) Ensure detection is enabled
+        Debug.Log("Marker detection restarted after rescan.");
     }
 
 }

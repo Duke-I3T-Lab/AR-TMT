@@ -235,7 +235,7 @@ public class MotorSpeedTest : MonoBehaviour
             string userFolderPath=Path.Combine(Application.persistentDataPath, $"User{SharedInfomanager.Instance.userFolderCounter.ToString("D3")}");
             
             string path_performancedata=Path.Combine(userFolderPath, $"Performancedata_task0.json");            
-            uploader.UploadData(path_performancedata,serverUrl);
+            uploader.UploadData(path_performancedata);
 
             }
         }
