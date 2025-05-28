@@ -79,7 +79,8 @@ public class ShootingAction_controler : MonoBehaviour
 
             // Make sound effect
             audioSource.PlayOneShot(soundClip,1.0f);
-            
+            SharedInfomanager.Instance.shootingdata.Add(new SharedInfomanager.ShootingData(hittype, label, distanceToCenter, time, hitResult));
+
             // Perform a raycast from the pointer position
             if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, detectionRange))
             {
@@ -122,7 +123,6 @@ public class ShootingAction_controler : MonoBehaviour
 
             }
             
-        SharedInfomanager.Instance.shootingdata.Add(new SharedInfomanager.ShootingData(hittype, label, distanceToCenter, time, hitResult));
         }
     }
     // private void Update()
