@@ -1,8 +1,8 @@
-# XR Spatial Tracking Evaluation
+# AR-TMT
 
-This repository contains the **testbed implementation, datasets, calibration tools, data collection framework, and analysis pipelines** as described in the paper:
+This repository contains the **demo** as described in the paper:
 
-**"XR Reality Check: What Commercial Devices Deliver for Spatial Tracking"**  
+**"AR-TMT: Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test"**  
 Tianyi Hu, Tianyuan Du, Zhehan Qu, Maria Gorlatova  
 To be presented at IEEE ISMAR 2025
 
@@ -10,11 +10,7 @@ To be presented at IEEE ISMAR 2025
 
 ## Overview
 
-Accurate spatial tracking is crucial for immersive XR experiences. We introduce a novel testbed enabling **simultaneous and synchronized evaluation** of multiple commercial XR devices under identical environmental and kinematic conditions.
-
-**Device and Environmental Setup**  
-![fig_device_setup.jpg](./figures/fig_apparatus_environment.jpg)
-
+Despite the growing use of AR in safety-critical domains, the field lacks a systematic understanding of how different types of distraction affect user attention in AR environments. To address this gap, we present \textbf{AR-TMT}, an AR adaptation of the Trail Making Test that spatially renders targets for sequential selection on the Magic Leap 2. We implemented distractions in three categories: top-down, bottom-up, and spatial distraction based on Wolfe's Guided Search model, and captured performance, gaze, motor behavior, and subjective load measures to analyze attention and behavior.
 This repo includes:
 
 - Hardware designs and instructions for multi-device mounting
