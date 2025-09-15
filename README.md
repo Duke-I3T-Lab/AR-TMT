@@ -1,13 +1,13 @@
 # AR-TMT
 
 **"AR-TMT: Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test"**  
-This is the official code repository for the paper to be presented at ACM VRST 2025, titled "**AR-TMT: Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test**", authored by Sihun Baek, Zhehan Qu, Maria Gorlatova. [arxiv link]TBD; [video link](https://youtu.be/-CHhz_t5S40)
+This is the official code repository for the paper to be presented at ACM VRST 2025, titled "**AR-TMT: Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test**", authored by Sihun Baek, Zhehan Qu, Maria Gorlatova. [video link](https://youtu.be/-CHhz_t5S40)
 
 
 ---
 
 ## Overview
-
+![Overview](assets/teaser.png)
 Despite the growing use of AR in safety-critical domains, the field lacks a systematic understanding of how different types of distraction affect user attention in AR environments. To address this gap, we present \textbf{AR-TMT}, an AR adaptation of the Trail Making Test that spatially renders targets for sequential selection on the Magic Leap 2. We implemented distractions in three categories: top-down, bottom-up, and spatial distraction based on Wolfe's Guided Search model, and captured performance, gaze, motor behavior, and subjective load measures to analyze attention and behavior.
 This repo includes:
 
