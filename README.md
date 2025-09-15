@@ -13,8 +13,8 @@ Despite the growing use of AR in safety-critical domains, the field lacks a syst
 ## Video Demonstration
 
 Check the video below for demoonstration of AR-TMT. It includes all the stages of AR-TMT that we implmeneted.
+[The link](https://youtu.be/-CHhz_t5S40)
 
-[The link] (https://youtu.be/-CHhz_t5S40)
 ---
 
 ## Citation
