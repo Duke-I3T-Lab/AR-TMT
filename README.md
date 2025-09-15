@@ -26,7 +26,6 @@ Check the video below for how we set up our experiment:
 If you use this work, please cite:
 ```
 TBD
-}
 ```
 
 ---
