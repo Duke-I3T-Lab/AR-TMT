@@ -17,13 +17,8 @@ This repo includes:
 
 ---
 ## Video Demonstration
-Check the video below (simply click on the image!) for how we setup our experiment. Individaul implemented stages is included.  
-<p align="center">
-    <a href="[https://youtube.com/watch?v=wGF_hvBP-hg?si=Q87Jvc0iydBMBP71](https://youtu.be/-CHhz_t5S40)">
-        <img src="assets/example.png" alt="Watch the video" style="width:50%;">
-    </a>
-</p>
-
+Check the video below for how we set up our experiment:  
+[Watch the video on YouTube](https://youtu.be/-CHhz_t5S40)
 ---
 
 ## Citation
