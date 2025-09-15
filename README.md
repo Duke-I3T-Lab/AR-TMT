@@ -1,10 +1,8 @@
 # AR-TMT
 
-This repository contains the **demo** as described in the paper:
-
 **"AR-TMT: Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test"**  
-Sihun Baek, Zhehan Qu, Maria Gorlatova  
-To be presented at ACM VRST 2025
+This is the official code repository for the paper to be presented at ACM VRST 2025, titled "**AR-TMT: Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test**", authored by Sihun Baek, Zhehan Qu, Maria Gorlatova. [arxiv link]TBD; [video link](https://youtu.be/-CHhz_t5S40)
+
 
 ---
 
