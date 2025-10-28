@@ -171,7 +171,7 @@ public class NoticeHandler : MonoBehaviour
             if(calibrating)
             {
             planedetectionscript.DestroyGeneratedMarkersAndWalls();
-            cameraScript.StartCameraFromExternalFlag();
+            // cameraScript.StartCameraFromExternalFlag();
             calibrating=false;
             }
 
@@ -233,7 +233,7 @@ public class NoticeHandler : MonoBehaviour
             {
                 Debug.Log("No saved walls found. Starting camera and plane detection.");
                 calibrating=true;
-                StopCamera();
+                // StopCamera();
                 planedetectionscript.StartPlaneDetection();
                 rescanbutton.SetActive(true);
 
