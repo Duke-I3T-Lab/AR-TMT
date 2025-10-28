@@ -1,16 +1,49 @@
-# Magic Leap Unity Examples
+# AR-TMT
+
+This is the official code repository for the paper to be presented at ACM VRST 2025, titled "**AR-TMT: Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test**", authored by Sihun Baek, Zhehan Qu, Maria Gorlatova. [video link](https://youtu.be/-CHhz_t5S40)
+
+
+---
 
 ## Overview
-This project contains example scenes demonstrating how to use Magic Leap features with the Magic Leap Unity SDK package, and has been configured to help the user quickly jump in and start developing for the Magic Leap 2.
+![Overview](main.png)
+Despite the growing use of AR in safety-critical domains, the field lacks a systematic understanding of how different types of distraction affect user attention in AR environments. To address this gap, we present **AR-TMT**, an AR adaptation of the Trail Making Test that spatially renders targets for sequential selection on the Magic Leap 2. We implemented distractions in three categories: top-down, bottom-up, and spatial distraction based on Wolfe's Guided Search model, and captured performance, gaze, motor behavior, and subjective load measures to analyze attention and behavior.
 
-The files in this project can change or even be removed from one release to another. If you're planning on depending or modifying these assets for your own project, we recommend that you duplicate the files, change the names and move them out of the Assets/MagicLeap folder. This will avoid issues like your changes being deleted when you upgrade to a new unitypackage.
+---
+## Video Demonstration
 
-## Compatible with
-- Unity Editor 2022.3+
-- Magic Leap Unity SDK 2.5.0
+Check the video below for demoonstration of AR-TMT. It includes all the stages of AR-TMT that we implmeneted.
+[The link](https://youtu.be/-CHhz_t5S40)
 
-# Copyright
-Copyright (c) 2020-present Magic Leap, Inc. All Rights Reserved.
-Use of this file is governed by the Developer Agreement, located
-here: https://id.magicleap.com/terms/developer
-"# AR-TMT" 
+---
+
+## Citation
+
+If you use this work, please cite:
+```
+TBD
+```
+
+---
+
+## License
+
+Licensed under the MIT License.
+
+---
+
+## Contact
+
+For questions or collaboration, contact:  
+**Sihun Baek**  
+sihun.baek@duke.edu  
+Department of Electrical and Computer Engineering, Duke University
+
+---
+
+Thank you for your interest in advancing XR spatial tracking!
+
+## Acknowledgements
+
+This work was supported in part by NSF grants CSR-2312760, CNS-2112562, and IIS-2231975, NSF CAREER Award IIS-2046072, NSF NAIAD Award 2332744, a Cisco Research Award, a Meta Research Award, Defense Advanced Research Projects Agency Young Faculty Award HR0011-24-1-0001, and the Army Research Laboratory under Cooperative Agreement Number W911NF-23-2-0224. The views and conclusions contained in this document are those of the authors and should not be interpreted as representing the official policies, either expressed or implied, of the Defense Advanced Research Projects Agency, the Army Research Laboratory, or the U.S. Government. This paper has been approved for public release; distribution is unlimited. No official endorsement should be inferred. The U.S.~Government is authorized to reproduce and distribute reprints for Government purposes notwithstanding any copyright notation herein.
+
