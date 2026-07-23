@@ -34,3 +34,6 @@ MemoryCaptures/
 
 # Other files
 *.DS_Store
+
+# Local experiment log folder (kept out of the repo)
+Assets/Logs.meta
