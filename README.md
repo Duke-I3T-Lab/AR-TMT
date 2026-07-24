@@ -4,8 +4,8 @@
 
 ### Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test
 
-[![Conference](https://img.shields.io/badge/ACM%20VRST-2025-1f6feb.svg)](https://vrst.hosting.acm.org/vrst2025/)
-[![arXiv](https://img.shields.io/badge/arXiv-2509.13468-b31b1b.svg)](https://arxiv.org/abs/2509.13468)
+[![Conference](https://img.shields.io/badge/ACM%20VRST-2025-1f6feb.svg)](https://vrst.acm.org/vrst2025/)
+[![DOI](https://img.shields.io/badge/DOI-10.1145%2F3756884.3765987-b31b1b.svg)](https://doi.org/10.1145/3756884.3765987)
 [![Video](https://img.shields.io/badge/YouTube-Demo-ff0000.svg?logo=youtube&logoColor=white)](https://youtu.be/-CHhz_t5S40)
 [![Unity](https://img.shields.io/badge/Unity-2022.3.48f1-000000.svg?logo=unity&logoColor=white)](https://unity.com/releases/editor/whats-new/2022.3.48)
 [![Platform](https://img.shields.io/badge/Platform-Magic%20Leap%202-7b2ff7.svg)](https://www.magicleap.com/magic-leap-2)
@@ -81,11 +81,15 @@ Assets/Scripts/AR-TMT
 If you use this work, please cite:
 
 ```bibtex
-@article{baek2025ar,
-  title   = {AR-TMT: Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test},
-  author  = {Baek, Sihun and Qu, Zhehan and Gorlatova, Maria},
-  journal = {arXiv preprint arXiv:2509.13468},
-  year    = {2025}
+@inproceedings{baek2025artmt,
+  title     = {AR-TMT: Investigating the Impact of Distraction Types on Attention and Behavior in AR-based Trail Making Test},
+  author    = {Baek, Sihun and Qu, Zhehan and Gorlatova, Maria},
+  booktitle = {Proceedings of the 31st ACM Symposium on Virtual Reality Software and Technology},
+  series    = {VRST '25},
+  year      = {2025},
+  publisher = {Association for Computing Machinery},
+  address   = {Montreal, QC, Canada},
+  doi       = {10.1145/3756884.3765987}
 }
 ```
 
